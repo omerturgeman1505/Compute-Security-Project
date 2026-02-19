@@ -1,0 +1,25 @@
+services:
+  database-safe:
+    container_name: database-safe
+    build: ./database
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=CommunicationLTD
+    ports:
+      - "3307:3306"
+
+  web-safe:
+    container_name: web-safe
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - MYSQL_HOST=database
+      - MYSQL_PORT=3306
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database-safe
+    user: root
+    command: /bin/bash -c "python backend.py"
